@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Microsite Pelatihan Numerasi Guru SD - BGTK Sulteng</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Fredoka & Quicksand for playful cartoon aesthetic -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cartoon: {
+                            sky: '#0EA5E9',
+                            skyLight: '#E0F2FE',
+                            brightBlue: '#2563EB',
+                            blueDark: '#1E3A8A',
+                            yellow: '#FACC15',
+                            yellowLight: '#FEF08A',
+                            pink: '#F472B6',
+                            green: '#34D399',
+                            orange: '#FB923C'
+                        }
+                    },
+                    fontFamily: {
+                        fredoka: ['Fredoka', 'cursive', 'sans-serif'],
+                        sans: ['Quicksand', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: #F0F9FF;
+            overflow-x: hidden;
+        }
+
+        .heading-font {
+            font-family: 'Fredoka', cursive, sans-serif;
+        }
+
+        /* Bright cartoon math canvas header background */
+        .cartoon-math-bg {
+            background: linear-gradient(135deg, #0284C7 0%, #3B82F6 50%, #2563EB 100%);
+            position: relative;
+        }
+
+        /* Playful 3D cartoon button push effect */
+        .cartoon-card {
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .cartoon-card:hover {
+            transform: translateY(-4px) scale(1.01);
+        }
+
+        /* Floating doodle canvas */
+        #cartoonCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #E0F2FE;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #38BDF8;
+            border-radius: 99px;
+            border: 2px solid #E0F2FE;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #0284C7;
+        }
+
+        /* Wiggle Animation for Math Badges */
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(-3deg); }
+            50% { transform: rotate(3deg); }
+        }
+        .animate-wiggle {
+            animation: wiggle 2.5s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col text-slate-800 antialiased bg-sky-50">
+
+    <!-- Top Decorative Header with Bright Cartoon Theme -->
+    <header class="relative cartoon-math-bg text-white pt-8 pb-20 px-4 sm:px-6 overflow-hidden shadow-lg border-b-8 border-sky-300">
+        <canvas id="cartoonCanvas"></canvas>
+        
+        <div class="max-w-4xl mx-auto relative z-10">
+            <!-- Top bar / Badge -->
+            <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+                <!-- Logo Kemendikdasmen BGTK Sulawesi Tengah (Official Crisp Logo) -->
+                <div class="bg-white px-4 py-2.5 rounded-2xl shadow-lg flex items-center justify-center gap-3 border-2 border-sky-100">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/9/9c/Logo_of_Ministry_of_Education_and_Culture_of_Republic_of_Indonesia.svg" 
+                         alt="Logo Tut Wuri Handayani Kemendikdasmen" 
+                         class="h-10 sm:h-12 w-auto object-contain shrink-0"
+                         onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Logo_of_Ministry_of_Education_and_Culture_of_Republic_of_Indonesia.svg/300px-Logo_of_Ministry_of_Education_and_Culture_of_Republic_of_Indonesia.svg.png';">
+                    <div class="text-left leading-tight">
+                        <div class="font-black text-lg sm:text-2xl tracking-tight heading-font">
+                            <span class="text-[#0082CB]">Kemen</span><span class="text-[#F4A900]">dikdasmen</span>
+                        </div>
+                        <div class="font-bold text-xs sm:text-sm text-slate-800 tracking-tight">
+                            BGTK Sulawesi Tengah
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin / Settings Toggle Button -->
+                <button onclick="openSettingsModal()" class="flex items-center gap-2 text-xs heading-font font-bold bg-amber-400 hover:bg-amber-300 text-slate-900 px-4 py-2.5 rounded-2xl transition border-2 border-amber-200 shadow-[0_4px_0_#D97706] active:translate-y-1 active:shadow-none">
+                    <i class="fa-solid fa-gear text-slate-900"></i>
+                    <span>Kelola Link (Admin)</span>
+                </button>
+            </div>
+
+            <!-- Title & Main Info -->
+            <div class="text-center my-6">
+                <span class="inline-block px-4 py-1.5 bg-yellow-300 text-slate-900 border-2 border-white text-xs sm:text-sm font-extrabold rounded-full mb-3 tracking-wide shadow-md heading-font animate-bounce">
+                    ✏️ PELATIHAN NUMERASI GURU SD 📐
+                </span>
+                <h1 class="text-3xl sm:text-5xl font-black tracking-tight text-white mb-2 leading-tight heading-font drop-shadow-md">
+                    Portal Numerasi Ceria
+                </h1>
+                <p class="text-sky-100 text-sm sm:text-base max-w-2xl mx-auto font-bold bg-black/10 backdrop-blur-sm px-4 py-2 rounded-xl border border-white/20">
+                    Penguatan Kemampuan Numerasi Dasar, Strategi Pembelajaran Bermakna, & Penilaian Pembelajaran Numerasi SD
+                </p>
+            </div>
+
+            <!-- Facilitator Profile Card (Cartoon Style) -->
+            <div class="mt-8 bg-white/95 backdrop-blur-md border-4 border-sky-200 rounded-3xl p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4 max-w-2xl mx-auto shadow-[0_8px_20px_rgba(2,132,199,0.3)] text-slate-800">
+                <div class="flex items-center gap-4">
+                    <div class="relative">
+                        <div id="facilitatorPhotoContainer" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr from-sky-400 to-amber-300 p-1 border-2 border-sky-400 shadow-md flex items-center justify-center overflow-hidden">
+                            <img id="facilitatorPhoto" 
+                                 src="https://lh3.googleusercontent.com/d/1MsDuf8PT9Ryq0nSvtL6OCOdI3O4RWJGP" 
+                                 alt="Foto Suryani, S.Pd., M.PMat." 
+                                 class="w-full h-full object-cover rounded-xl"
+                                 onerror="handlePhotoError(this)">
+                        </div>
+                        <span class="absolute -bottom-1 -right-1 w-6 h-6 bg-emerald-400 border-2 border-white rounded-full flex items-center justify-center text-xs text-white font-bold" title="Widyaiswara Aktif">✓</span>
+                    </div>
+                    <div class="text-left">
+                        <h2 class="text-lg sm:text-xl font-black text-slate-800 flex items-center gap-2 heading-font">
+                            Suryani, S.Pd., M.PMat.
+                            <i class="fa-solid fa-circle-check text-sky-500 text-sm" title="Pengampu Resmi"></i>
+                        </h2>
+                        <p class="text-xs sm:text-sm text-sky-700 font-bold">Widyaiswara Ahli Muda BGTK Sulteng</p>
+                        <div class="flex items-center gap-3 mt-1 text-xs text-slate-600 font-bold">
+                            <span>📍 Sulawesi Tengah</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex sm:flex-col items-center justify-center gap-2 border-t-2 sm:border-t-0 sm:border-l-2 border-sky-100 pt-3 sm:pt-0 sm:pl-5 w-full sm:w-auto">
+                    <div class="text-center">
+                        <span class="block text-[11px] font-bold text-slate-500">TARGET PESERTA</span>
+                        <span class="text-xs font-black text-blue-700 bg-sky-100 px-3 py-1 rounded-full border border-sky-300 heading-font">
+                            🎓 Guru SD / MI
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Wavy Bottom Divider -->
+        <div class="absolute bottom-0 left-0 right-0 overflow-hidden leading-none z-10">
+            <svg class="relative block w-full h-8 sm:h-12" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V95.8C59.71,118.08,130.83,121.6,200,115.8,241.09,112.36,281.82,88.75,321.39,56.44Z" fill="#F0F9FF"></path>
+            </svg>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 mt-4 relative z-20 flex-1 w-full mb-12">
+        
+        <!-- Quick Announcement Banner -->
+        <div class="bg-white rounded-3xl p-4 shadow-[0_6px_0_#BAE6FD] border-3 border-sky-300 mb-8 flex flex-wrap items-center justify-between gap-4 text-xs sm:text-sm">
+            <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl font-bold border-2 border-amber-300 shrink-0">
+                    📢
+                </div>
+                <div>
+                    <span class="font-extrabold text-slate-800 block heading-font text-base">Informasi Pelatihan</span>
+                    <span class="text-slate-600 font-semibold">Pastikan mengisi Daftar Hadir setiap sesi & selesaikan Pre-Tes sebelum materi.</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-2 ml-auto">
+                <span class="px-3 py-1.5 bg-emerald-100 border-2 border-emerald-300 text-emerald-800 rounded-2xl text-xs font-bold heading-font flex items-center gap-1.5 shadow-sm">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span> Sesi Berlangsung
+                </span>
+            </div>
+        </div>
+
+        <!-- MAIN LINKS GRID (CARTOON STYLE) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-10" id="mainLinksContainer">
+            <!-- Dynamic JavaScript rendered link cards go here -->
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-sky-900 text-sky-200 py-8 px-4 text-center text-xs mt-auto border-t-8 border-sky-400">
+        <div class="max-w-4xl mx-auto space-y-3">
+            <p class="text-sky-200 max-w-lg mx-auto font-medium">
+                Pengembangan Pelatihan Numerasi Guru SD oleh <strong class="text-white">Suryani, S.Pd., M.PMat.</strong> (Widyaiswara Ahli Muda BGTK Sulteng).
+            </p>
+            <p class="text-sky-300 text-[11px] pt-2 font-semibold">
+                &copy; 2026 Kementerian Pendidikan Dasar dan Menengah (Kemendikdasmen) • BGTK Sulteng. All Rights Reserved.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Admin Settings Modal -->
+    <div id="settingsModal" class="fixed inset-0 bg-sky-950/70 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border-4 border-sky-300 max-h-[90vh] overflow-y-auto">
+            
+            <!-- Step 1: Admin Password Verification Screen -->
+            <div id="adminAuthStep" class="py-4">
+                <div class="text-center mb-6">
+                    <div class="w-16 h-16 bg-amber-100 text-amber-500 border-4 border-amber-300 rounded-3xl flex items-center justify-center mx-auto mb-3 text-3xl shadow-inner animate-wiggle">
+                        🔐
+                    </div>
+                    <h3 class="text-xl font-black text-slate-800 heading-font">Verifikasi Akses Admin</h3>
+                    <p class="text-xs text-slate-500 font-semibold mt-1">Masukkan kata sandi admin untuk mengelola dan memperbarui tautan pelatihan.</p>
+                </div>
+
+                <form onsubmit="verifyAdminPassword(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1 heading-font">Password Admin</label>
+                        <div class="relative">
+                            <input type="password" id="input_adminPass" required class="w-full pl-9 pr-10 py-3 rounded-2xl border-2 border-sky-200 focus:border-sky-500 focus:outline-none text-xs font-bold" placeholder="Masukkan password...">
+                            <i class="fa-solid fa-key absolute left-3 top-3.5 text-sky-400 text-xs"></i>
+                            <button type="button" onclick="togglePasswordVisibility('input_adminPass', 'toggleIconAuth')" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 text-xs p-1">
+                                <i class="fa-solid fa-eye" id="toggleIconAuth"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="authErrorMsg" class="hidden p-3 bg-rose-100 border-2 border-rose-300 text-rose-700 text-xs rounded-2xl font-bold flex items-center gap-2">
+                        <i class="fa-solid fa-circle-exclamation text-base"></i>
+                        <span>Password salah. Silakan coba lagi!</span>
+                    </div>
+
+                    <div class="flex gap-3 pt-2">
+                        <button type="button" onclick="closeSettingsModal()" class="w-1/3 py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-extrabold rounded-2xl transition heading-font border-2 border-slate-200">
+                            Batal
+                        </button>
+                        <button type="submit" class="w-2/3 py-3 bg-sky-500 hover:bg-sky-600 text-white text-xs font-extrabold rounded-2xl shadow-[0_4px_0_#0284C7] transition active:translate-y-1 active:shadow-none flex items-center justify-center gap-2 heading-font">
+                            <i class="fa-solid fa-right-to-bracket"></i> Masuk Admin
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Step 2: Form Edit Link (Accessible after password verification) -->
+            <div id="adminFormStep" class="hidden">
+                <div class="flex items-center justify-between pb-3 border-b-2 border-sky-100 mb-4">
+                    <div class="flex items-center gap-2 text-sky-700 font-extrabold text-base heading-font">
+                        <span class="text-xl">⚙️</span>
+                        <span>Kelola Link Microsite Ibu Suryani</span>
+                    </div>
+                    <button onclick="closeSettingsModal()" class="w-8 h-8 rounded-xl bg-slate-100 text-slate-500 hover:bg-rose-100 hover:text-rose-600 font-bold flex items-center justify-center transition border border-slate-200">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <div class="flex items-center justify-between mb-4">
+                    <p class="text-xs text-slate-500 font-semibold">
+                        Atur, tambah, atau hapus tautan microsite.
+                    </p>
+                    <button type="button" onclick="addNewLinkItem()" class="px-3.5 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-black rounded-2xl shadow-[0_3px_0_#059669] transition active:translate-y-0.5 active:shadow-none shrink-0 flex items-center gap-1.5 heading-font">
+                        <i class="fa-solid fa-plus"></i> Tambah Link
+                    </button>
+                </div>
+
+                <form id="linkSettingsForm" onsubmit="saveLinkSettings(event)" class="space-y-4 text-xs">
+                    <!-- Dynamic Admin Links List Container -->
+                    <div id="adminLinksListContainer" class="space-y-3 max-h-[48vh] overflow-y-auto pr-1">
+                        <!-- Dynamic input cards inserted via JS -->
+                    </div>
+
+                    <!-- Facilitator Photo & Admin Password Section -->
+                    <div class="pt-3 border-t-2 border-sky-100 mt-4 space-y-3">
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1 heading-font">🖼️ Edit Link Foto Pengampu (Ibu Suryani)</label>
+                            <input type="text" id="input_facilitatorPhotoUrl" class="w-full px-3 py-2 rounded-xl border-2 border-sky-200 focus:border-sky-500 focus:outline-none text-xs font-semibold" placeholder="Masukkan link foto Google Drive / Web...">
+                            <p class="text-[10px] text-slate-500 mt-1 font-semibold">Mendukung link Google Drive atau nama file foto lokal (contoh: foto_suryani.jpg).</p>
+                        </div>
+
+                        <details class="group">
+                            <summary class="flex items-center justify-between cursor-pointer text-slate-700 font-extrabold py-1 select-none hover:text-sky-600 heading-font">
+                                <span class="flex items-center gap-1.5">🔑 Ubah Password Admin</span>
+                                <i class="fa-solid fa-chevron-down text-xs transition group-open:rotate-180"></i>
+                            </summary>
+                            <div class="pt-2 space-y-2">
+                                <div>
+                                    <label class="block font-bold text-slate-600 mb-1">Password Baru Admin</label>
+                                    <input type="password" id="input_newAdminPass" class="w-full px-3 py-2 rounded-xl border-2 border-sky-200 focus:border-sky-500 focus:outline-none text-xs font-semibold" placeholder="Isi hanya jika ingin mengubah password">
+                                </div>
+                            </div>
+                        </details>
+                    </div>
+
+                    <div class="pt-4 flex gap-2 border-t-2 border-sky-100">
+                        <button type="button" onclick="resetDefaultLinks()" class="px-3.5 py-2.5 bg-slate-100 text-slate-600 rounded-2xl font-bold hover:bg-slate-200 transition border border-slate-300 heading-font">
+                            Reset Default
+                        </button>
+                        <button type="submit" class="flex-1 py-2.5 bg-sky-500 hover:bg-sky-600 text-white font-black rounded-2xl shadow-[0_4px_0_#0284C7] transition active:translate-y-1 active:shadow-none flex items-center justify-center gap-2 heading-font text-sm">
+                            <i class="fa-solid fa-floppy-disk"></i> Simpan Perubahan
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Notification Toast Element -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-2xl z-50 transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-3 text-xs font-bold border-2 border-amber-400">
+        <i class="fa-solid fa-circle-check text-emerald-400 text-lg" id="toastIcon"></i>
+        <span id="toastMsg" class="heading-font">Pengaturan tersimpan!</span>
+    </div>
+
+    <script>
+        /* =================================================================================
+         * ⚙️ KONFIGURASI FOTO & ADMIN (SANGAT EASY EDIT SAAT KODE DI-DOWNLOAD)
+         * ---------------------------------------------------------------------------------
+         * Jika Anda mengunduh file HTML ini dan ingin mengganti foto bawaan di dalam kode:
+         * - Untuk Foto Google Drive: Tempelkan link share Google Drive di bawah ini.
+         * - Untuk Foto File Lokal: Simpan file foto (misal: foto_suryani.jpg) di folder yang sama
+         *   dengan file HTML ini, lalu ubah isi 'DEFAULT_PHOTO_URL' menjadi 'foto_suryani.jpg'.
+         * ================================================================================= */
+        const DEFAULT_ADMIN_PASS = 'bgtk2026';
+        const DEFAULT_PHOTO_URL = 'https://drive.google.com/file/d/1MsDuf8PT9Ryq0nSvtL6OCOdI3O4RWJGP/view?usp=sharing';
+        
+        const CARTOON_PRESETS = [
+            {
+                cardBorder: 'border-sky-300',
+                cardShadow: 'shadow-[0_6px_0_#38BDF8]',
+                badgeBg: 'bg-sky-100 text-sky-800 border-sky-300',
+                btnBg: 'bg-sky-500 hover:bg-sky-600 shadow-[0_4px_0_#0284C7]',
+                iconBg: 'bg-sky-100 text-sky-600'
+            },
+            {
+                cardBorder: 'border-amber-300',
+                cardShadow: 'shadow-[0_6px_0_#FBBF24]',
+                badgeBg: 'bg-amber-100 text-amber-800 border-amber-300',
+                btnBg: 'bg-amber-500 hover:bg-amber-600 shadow-[0_4px_0_#D97706]',
+                iconBg: 'bg-amber-100 text-amber-600'
+            },
+            {
+                cardBorder: 'border-indigo-300',
+                cardShadow: 'shadow-[0_6px_0_#818CF8]',
+                badgeBg: 'bg-indigo-100 text-indigo-800 border-indigo-300',
+                btnBg: 'bg-indigo-500 hover:bg-indigo-600 shadow-[0_4px_0_#4F46E5]',
+                iconBg: 'bg-indigo-100 text-indigo-600'
+            },
+            {
+                cardBorder: 'border-emerald-300',
+                cardShadow: 'shadow-[0_6px_0_#34D399]',
+                badgeBg: 'bg-emerald-100 text-emerald-800 border-emerald-300',
+                btnBg: 'bg-emerald-500 hover:bg-emerald-600 shadow-[0_4px_0_#059669]',
+                iconBg: 'bg-emerald-100 text-emerald-600'
+            },
+            {
+                cardBorder: 'border-rose-300',
+                cardShadow: 'shadow-[0_6px_0_#FB7185]',
+                badgeBg: 'bg-rose-100 text-rose-800 border-rose-300',
+                btnBg: 'bg-rose-500 hover:bg-rose-600 shadow-[0_4px_0_#E11D48]',
+                iconBg: 'bg-rose-100 text-rose-600'
+            },
+            {
+                cardBorder: 'border-purple-300',
+                cardShadow: 'shadow-[0_6px_0_#C084FC]',
+                badgeBg: 'bg-purple-100 text-purple-800 border-purple-300',
+                btnBg: 'bg-purple-500 hover:bg-purple-600 shadow-[0_4px_0_#9333EA]',
+                iconBg: 'bg-purple-100 text-purple-600'
+            }
+        ];
+
+        const defaultLinksData = [
+            {
+                id: 'link_1',
+                title: 'Daftar Hadir Pelatihan',
+                desc: 'Presensi kehadiran harian peserta pelatihan numerasi SD',
+                url: '#',
+                icon: 'fa-clipboard-user',
+                badge: '📋 Presensi',
+                ...CARTOON_PRESETS[0]
+            },
+            {
+                id: 'link_2',
+                title: 'Pre-Test Numerasi SD',
+                desc: 'Asesmen awal penguatan kompetensi numerasi guru SD',
+                url: '#',
+                icon: 'fa-chart-pie',
+                badge: '📊 Pre-Test',
+                ...CARTOON_PRESETS[1]
+            },
+            {
+                id: 'link_3',
+                title: 'Materi & Modul Pelatihan',
+                desc: 'Akses slide presentasi, modul, dan LKPD pembelajaran',
+                url: '#',
+                icon: 'fa-book-open-reader',
+                badge: '📚 Materi',
+                ...CARTOON_PRESETS[2]
+            },
+            {
+                id: 'link_4',
+                title: 'Jadwal & Agenda Pelatihan',
+                desc: 'Susunan kegiatan pelatihan numerasi guru SD',
+                url: '#',
+                icon: 'fa-calendar-days',
+                badge: '🗓️ Jadwal',
+                ...CARTOON_PRESETS[3]
+            },
+            {
+                id: 'link_5',
+                title: 'Pengumpulan Tugas & LKPD',
+                desc: 'Unggah hasil kerja mandiri dan tugas kelompok peserta',
+                url: '#',
+                icon: 'fa-file-arrow-up',
+                badge: '📝 Tugas',
+                ...CARTOON_PRESETS[4]
+            },
+            {
+                id: 'link_6',
+                title: 'Post-Test Numerasi SD',
+                desc: 'Evaluasi akhir pencapaian kompetensi pelatihan',
+                url: '#',
+                icon: 'fa-square-poll-vertical',
+                badge: '📈 Post-Test',
+                ...CARTOON_PRESETS[5]
+            },
+            {
+                id: 'link_7',
+                title: 'Dokumentasi Kegiatan',
+                desc: 'Galeri foto dan rekaman aktivitas pelatihan numerasi',
+                url: '#',
+                icon: 'fa-camera-retro',
+                badge: '📸 Galeri',
+                ...CARTOON_PRESETS[0]
+            }
+        ];
+
+        let currentAdminPass = DEFAULT_ADMIN_PASS;
+        let currentPhotoUrl = DEFAULT_PHOTO_URL;
+
+        // Active links state
+        let currentLinksData = [...defaultLinksData];
+        let tempAdminLinks = [];
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadSavedPassword();
+            loadSavedPhoto();
+            loadSavedLinks();
+            renderLinkCards();
+            initCartoonCanvas();
+        });
+
+        function convertToDirectImageUrl(url) {
+            if (!url) return '';
+            url = url.trim();
+            // Otomatis ubah Google Drive View Link ke Direct Image Link
+            const driveMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+            if (driveMatch && driveMatch[1] && url.includes('drive.google.com')) {
+                return `https://lh3.googleusercontent.com/d/${driveMatch[1]}`;
+            }
+            return url;
+        }
+
+        function loadSavedPassword() {
+            const savedPass = localStorage.getItem('suryani_admin_password');
+            if (savedPass) {
+                currentAdminPass = savedPass;
+            } else {
+                currentAdminPass = DEFAULT_ADMIN_PASS;
+            }
+        }
+
+        function loadSavedPhoto() {
+            const savedPhoto = localStorage.getItem('suryani_photo_url');
+            if (savedPhoto !== null) {
+                currentPhotoUrl = savedPhoto;
+            } else {
+                currentPhotoUrl = DEFAULT_PHOTO_URL;
+            }
+            applyFacilitatorPhoto(currentPhotoUrl);
+        }
+
+        function applyFacilitatorPhoto(url) {
+            const container = document.getElementById('facilitatorPhotoContainer');
+            const directUrl = convertToDirectImageUrl(url);
+
+            if (container) {
+                if (directUrl && directUrl.trim() !== '') {
+                    container.innerHTML = `
+                        <img id="facilitatorPhoto" 
+                             src="${escapeHtml(directUrl)}" 
+                             alt="Foto Suryani, S.Pd., M.PMat." 
+                             class="w-full h-full object-cover rounded-xl"
+                             onerror="handlePhotoError(this)">
+                    `;
+                } else {
+                    container.innerHTML = `
+                        <div class="w-full h-full bg-sky-400 text-white flex items-center justify-center text-3xl font-bold rounded-xl" title="Tidak ada foto">👩‍🏫</div>
+                    `;
+                }
+            }
+        }
+
+        function handlePhotoError(imgEl) {
+            imgEl.onerror = null;
+            if (imgEl.parentElement) {
+                imgEl.parentElement.innerHTML = `
+                    <div class="w-full h-full rounded-xl bg-sky-500 flex items-center justify-center text-3xl" title="Gagal memuat foto">👩‍🏫</div>
+                `;
+            }
+        }
+
+        function loadSavedLinks() {
+            const saved = localStorage.getItem('suryani_numerasi_links_v3');
+            if (saved) {
+                try {
+                    currentLinksData = JSON.parse(saved);
+                } catch (e) {
+                    currentLinksData = [...defaultLinksData];
+                }
+            } else {
+                currentLinksData = [...defaultLinksData];
+            }
+        }
+
+        // Render Cards dynamically on Main Page (Bright Cartoon Style)
+        function renderLinkCards() {
+            const container = document.getElementById('mainLinksContainer');
+            container.innerHTML = '';
+
+            if (!currentLinksData || currentLinksData.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-10 bg-white rounded-3xl border-4 border-dashed border-sky-200">
+                        <span class="text-4xl block mb-2">🎈</span>
+                        <p class="text-base font-extrabold text-slate-600 heading-font">Belum ada tautan yang ditambahkan.</p>
+                        <p class="text-xs text-slate-400 mt-1 font-semibold">Gunakan menu Kelola Link (Admin) untuk menambah tautan baru.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            currentLinksData.forEach(card => {
+                const el = document.createElement('div');
+                const preset = CARTOON_PRESETS[0];
+                const cardShadow = card.cardShadow || preset.cardShadow;
+                const cardBorder = card.cardBorder || preset.cardBorder;
+                const btnBg = card.btnBg || preset.btnBg;
+                const badgeBg = card.badgeBg || preset.badgeBg;
+                const iconBg = card.iconBg || preset.iconBg;
+
+                el.className = `bg-white rounded-3xl p-4 sm:p-5 flex items-center justify-between gap-4 border-3 ${cardBorder} ${cardShadow} cartoon-card text-slate-800`;
+                
+                el.innerHTML = `
+                    <div class="flex items-center gap-3.5 min-w-0">
+                        <div class="w-12 h-12 rounded-2xl ${iconBg} border-2 border-white flex items-center justify-center text-xl shrink-0 shadow-md">
+                            <i class="fa-solid ${card.icon || 'fa-link'}"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <div class="flex items-center gap-2 mb-0.5">
+                                <h3 class="font-extrabold text-slate-800 text-sm sm:text-base truncate heading-font">${card.title || 'Tanpa Judul'}</h3>
+                            </div>
+                            <p class="text-xs text-slate-500 font-semibold truncate">${card.desc || '-'}</p>
+                            ${card.badge ? `<span class="inline-block mt-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-black border ${badgeBg} heading-font">${card.badge}</span>` : ''}
+                        </div>
+                    </div>
+
+                    <button onclick="handleLinkClick('${card.url}')" class="${btnBg} text-white px-4 py-2.5 rounded-2xl text-xs font-black shrink-0 flex items-center gap-2 transition active:translate-y-0.5 active:shadow-none heading-font">
+                        <span>Akses</span>
+                        <i class="fa-solid fa-arrow-right-long"></i>
+                    </button>
+                `;
+                container.appendChild(el);
+            });
+        }
+
+        function handleLinkClick(url) {
+            if (url && url !== '#' && url.trim() !== '') {
+                window.open(url, '_blank');
+            } else {
+                showToast("Link belum diatur oleh Admin", true);
+            }
+        }
+
+        function openSettingsModal() {
+            document.getElementById('adminAuthStep').classList.remove('hidden');
+            document.getElementById('adminFormStep').classList.add('hidden');
+            document.getElementById('input_adminPass').value = '';
+            document.getElementById('authErrorMsg').classList.add('hidden');
+            
+            document.getElementById('settingsModal').classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById('input_adminPass').focus();
+            }, 100);
+        }
+
+        function closeSettingsModal() {
+            document.getElementById('settingsModal').classList.add('hidden');
+        }
+
+        function verifyAdminPassword(e) {
+            e.preventDefault();
+            const enteredPass = document.getElementById('input_adminPass').value;
+            const errorMsg = document.getElementById('authErrorMsg');
+
+            if (enteredPass === currentAdminPass) {
+                errorMsg.classList.add('hidden');
+                tempAdminLinks = JSON.parse(JSON.stringify(currentLinksData));
+                renderAdminLinksList();
+
+                const urlInput = document.getElementById('input_facilitatorPhotoUrl');
+                if (urlInput) {
+                    urlInput.value = currentPhotoUrl;
+                }
+
+                document.getElementById('input_newAdminPass').value = '';
+
+                document.getElementById('adminAuthStep').classList.add('hidden');
+                document.getElementById('adminFormStep').classList.remove('hidden');
+            } else {
+                errorMsg.classList.remove('hidden');
+                document.getElementById('input_adminPass').select();
+            }
+        }
+
+        function renderAdminLinksList() {
+            const container = document.getElementById('adminLinksListContainer');
+            container.innerHTML = '';
+
+            if (tempAdminLinks.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-6 bg-sky-50 rounded-2xl border-2 border-dashed border-sky-300 text-slate-500 text-xs font-semibold">
+                        Tautan kosong. Klik tombol <strong>+ Tambah Link</strong> untuk membuat tautan baru.
+                    </div>
+                `;
+                return;
+            }
+
+            tempAdminLinks.forEach((item, index) => {
+                const cardEl = document.createElement('div');
+                cardEl.className = 'bg-sky-50 p-3.5 rounded-2xl border-2 border-sky-200 relative space-y-2';
+
+                cardEl.innerHTML = `
+                    <div class="flex items-center justify-between gap-2 pb-1.5 border-b border-sky-200">
+                        <span class="font-extrabold text-sky-800 text-xs flex items-center gap-1.5 heading-font">
+                            <i class="fa-solid ${item.icon || 'fa-link'} text-amber-500"></i>
+                            Tautan #${index + 1}
+                        </span>
+                        <button type="button" onclick="deleteLinkItem(${index})" class="text-xs text-rose-600 hover:text-rose-800 font-extrabold px-2.5 py-1 bg-rose-100 hover:bg-rose-200 rounded-xl border border-rose-300 transition flex items-center gap-1 heading-font">
+                            <i class="fa-solid fa-trash-can"></i> Hapus
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <div>
+                            <label class="block font-bold text-slate-600 text-[11px] mb-0.5">Judul Tautan</label>
+                            <input type="text" value="${escapeHtml(item.title || '')}" onchange="updateTempLink(${index}, 'title', this.value)" class="w-full px-2.5 py-1.5 rounded-xl border border-sky-300 focus:ring-2 focus:ring-sky-500 focus:outline-none text-xs font-semibold" required placeholder="Contoh: Modul Pembelajaran">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-600 text-[11px] mb-0.5">Label Badge (Opsional)</label>
+                            <input type="text" value="${escapeHtml(item.badge || '')}" onchange="updateTempLink(${index}, 'badge', this.value)" class="w-full px-2.5 py-1.5 rounded-xl border border-sky-300 focus:ring-2 focus:ring-sky-500 focus:outline-none text-xs font-semibold" placeholder="Contoh: 📋 Presensi">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block font-bold text-slate-600 text-[11px] mb-0.5">Deskripsi Singkat</label>
+                        <input type="text" value="${escapeHtml(item.desc || '')}" onchange="updateTempLink(${index}, 'desc', this.value)" class="w-full px-2.5 py-1.5 rounded-xl border border-sky-300 focus:ring-2 focus:ring-sky-500 focus:outline-none text-xs font-semibold" placeholder="Contoh: Penjelasan singkat tautan">
+                    </div>
+
+                    <div>
+                        <label class="block font-bold text-slate-600 text-[11px] mb-0.5">URL Target (Google Form / Drive / PDF)</label>
+                        <input type="url" value="${escapeHtml(item.url || '')}" onchange="updateTempLink(${index}, 'url', this.value)" class="w-full px-2.5 py-1.5 rounded-xl border border-sky-300 focus:ring-2 focus:ring-sky-500 focus:outline-none text-xs font-semibold" required placeholder="https://forms.gle/... atau https://drive.google.com/...">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 pt-1">
+                        <div>
+                            <label class="block font-bold text-slate-600 text-[11px] mb-0.5">Ikon FontAwesome</label>
+                            <select onchange="updateTempLink(${index}, 'icon', this.value)" class="w-full px-2 py-1.5 rounded-xl border border-sky-300 text-xs font-semibold">
+                                <option value="fa-clipboard-user" ${item.icon === 'fa-clipboard-user' ? 'selected' : ''}>📋 Presensi / Absen</option>
+                                <option value="fa-chart-pie" ${item.icon === 'fa-chart-pie' ? 'selected' : ''}>📊 Pre-Test</option>
+                                <option value="fa-book-open-reader" ${item.icon === 'fa-book-open-reader' ? 'selected' : ''}>📚 Materi & Modul</option>
+                                <option value="fa-calendar-days" ${item.icon === 'fa-calendar-days' ? 'selected' : ''}>🗓️ Jadwal Agenda</option>
+                                <option value="fa-file-arrow-up" ${item.icon === 'fa-file-arrow-up' ? 'selected' : ''}>📝 Pengumpulan Tugas</option>
+                                <option value="fa-square-poll-vertical" ${item.icon === 'fa-square-poll-vertical' ? 'selected' : ''}>📈 Post-Test</option>
+                                <option value="fa-camera-retro" ${item.icon === 'fa-camera-retro' ? 'selected' : ''}>📸 Foto Dokumentasi</option>
+                                <option value="fa-video" ${item.icon === 'fa-video' ? 'selected' : ''}>🎥 Rekaman Video</option>
+                                <option value="fa-award" ${item.icon === 'fa-award' ? 'selected' : ''}>🏆 Sertifikat</option>
+                                <option value="fa-link" ${item.icon === 'fa-link' ? 'selected' : ''}>🔗 Tautan Umum</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-600 text-[11px] mb-0.5">Tema Warna Cartoon</label>
+                            <select onchange="updateTempLinkColor(${index}, this.value)" class="w-full px-2 py-1.5 rounded-xl border border-sky-300 text-xs font-semibold">
+                                <option value="0" ${item.cardBorder?.includes('sky') ? 'selected' : ''}>Biru Cerah (Sky)</option>
+                                <option value="1" ${item.cardBorder?.includes('amber') ? 'selected' : ''}>Kuning Emas</option>
+                                <option value="2" ${item.cardBorder?.includes('indigo') ? 'selected' : ''}>Nila Indigo</option>
+                                <option value="3" ${item.cardBorder?.includes('emerald') ? 'selected' : ''}>Hijau Zamrud</option>
+                                <option value="4" ${item.cardBorder?.includes('rose') ? 'selected' : ''}>Merah Ceria</option>
+                                <option value="5" ${item.cardBorder?.includes('purple') ? 'selected' : ''}>Ungu Playful</option>
+                            </select>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(cardEl);
+            });
+        }
+
+        function updateTempLink(index, prop, value) {
+            if (tempAdminLinks[index]) {
+                tempAdminLinks[index][prop] = value;
+            }
+        }
+
+        function updateTempLinkColor(index, colorPresetIndex) {
+            const preset = CARTOON_PRESETS[parseInt(colorPresetIndex)] || CARTOON_PRESETS[0];
+            if (tempAdminLinks[index]) {
+                tempAdminLinks[index].cardBorder = preset.cardBorder;
+                tempAdminLinks[index].cardShadow = preset.cardShadow;
+                tempAdminLinks[index].badgeBg = preset.badgeBg;
+                tempAdminLinks[index].btnBg = preset.btnBg;
+                tempAdminLinks[index].iconBg = preset.iconBg;
+            }
+        }
+
+        function addNewLinkItem() {
+            const preset = CARTOON_PRESETS[tempAdminLinks.length % CARTOON_PRESETS.length];
+            const newItem = {
+                id: 'link_' + Date.now(),
+                title: 'Tautan Baru ' + (tempAdminLinks.length + 1),
+                desc: 'Deskripsi tautan baru',
+                url: 'https://',
+                icon: 'fa-link',
+                badge: '⭐ Baru',
+                cardBorder: preset.cardBorder,
+                cardShadow: preset.cardShadow,
+                badgeBg: preset.badgeBg,
+                btnBg: preset.btnBg,
+                iconBg: preset.iconBg
+            };
+            tempAdminLinks.push(newItem);
+            renderAdminLinksList();
+            showToast("Tautan baru ditambahkan!", false);
+        }
+
+        function deleteLinkItem(index) {
+            if (index >= 0 && index < tempAdminLinks.length) {
+                const deletedTitle = tempAdminLinks[index].title || 'Tautan';
+                tempAdminLinks.splice(index, 1);
+                renderAdminLinksList();
+                showToast(`"${deletedTitle}" berhasil dihapus`, true);
+            }
+        }
+
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        function togglePasswordVisibility(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fa-solid fa-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'fa-solid fa-eye';
+            }
+        }
+
+        function saveLinkSettings(e) {
+            e.preventDefault();
+            currentLinksData = JSON.parse(JSON.stringify(tempAdminLinks));
+
+            // Save photo URL
+            const photoInput = document.getElementById('input_facilitatorPhotoUrl');
+            if (photoInput) {
+                currentPhotoUrl = photoInput.value.trim();
+                localStorage.setItem('suryani_photo_url', currentPhotoUrl);
+                applyFacilitatorPhoto(currentPhotoUrl);
+            }
+
+            const newPass = document.getElementById('input_newAdminPass').value.trim();
+            if (newPass) {
+                currentAdminPass = newPass;
+                localStorage.setItem('suryani_admin_password', newPass);
+            }
+
+            localStorage.setItem('suryani_numerasi_links_v3', JSON.stringify(currentLinksData));
+            renderLinkCards();
+            closeSettingsModal();
+            showToast("Pengaturan profil & tautan berhasil disimpan!");
+        }
+
+        function resetDefaultLinks() {
+            currentLinksData = JSON.parse(JSON.stringify(defaultLinksData));
+            tempAdminLinks = JSON.parse(JSON.stringify(defaultLinksData));
+            currentAdminPass = DEFAULT_ADMIN_PASS;
+            currentPhotoUrl = DEFAULT_PHOTO_URL;
+
+            localStorage.removeItem('suryani_numerasi_links_v3');
+            localStorage.removeItem('suryani_admin_password');
+            localStorage.removeItem('suryani_photo_url');
+
+            applyFacilitatorPhoto(DEFAULT_PHOTO_URL);
+            renderAdminLinksList();
+            renderLinkCards();
+            closeSettingsModal();
+            showToast("Tautan, foto, & password kembali ke awal bawaan!");
+        }
+
+        function showToast(msg, isError = false) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            const toastIcon = document.getElementById('toastIcon');
+
+            toastMsg.innerText = msg;
+            if (isError) {
+                toastIcon.className = "fa-solid fa-triangle-exclamation text-amber-400 text-xl";
+            } else {
+                toastIcon.className = "fa-solid fa-circle-check text-emerald-400 text-xl";
+            }
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // Animated Cartoon Floating Math Doodles
+        function initCartoonCanvas() {
+            const canvas = document.getElementById('cartoonCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+
+            function resize() {
+                canvas.width = canvas.parentElement.offsetWidth;
+                canvas.height = canvas.parentElement.offsetHeight;
+            }
+            resize();
+            window.addEventListener('resize', resize);
+
+            const mathItems = ['1', '2', '3', '5', '8', '9', '+', '−', '×', '÷', '=', '√', 'π', '★', '▲', '✏️', '🧮', '📐'];
+            const particles = [];
+
+            for (let i = 0; i < 30; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    text: mathItems[Math.floor(Math.random() * mathItems.length)],
+                    size: Math.random() * 16 + 14,
+                    speedY: (Math.random() - 0.5) * 0.5,
+                    speedX: (Math.random() - 0.5) * 0.3,
+                    rotation: Math.random() * Math.PI * 2,
+                    rotSpeed: (Math.random() - 0.5) * 0.02,
+                    opacity: Math.random() * 0.25 + 0.15
+                });
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.y += p.speedY;
+                    p.x += p.speedX;
+                    p.rotation += p.rotSpeed;
+
+                    if (p.y < 0) p.y = canvas.height;
+                    if (p.y > canvas.height) p.y = 0;
+                    if (p.x < 0) p.x = canvas.width;
+                    if (p.x > canvas.width) p.x = 0;
+
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.rotation);
+                    ctx.fillStyle = `rgba(255, 255, 255, ${p.opacity})`;
+                    ctx.font = `bold ${p.size}px 'Fredoka', cursive`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(p.text, 0, 0);
+                    ctx.restore();
+                });
+                requestAnimationFrame(animate);
+            }
+            animate();
+        }
+    </script>
+</body>
+</html>
